@@ -7,6 +7,8 @@
 using namespace std;
 using namespace cv;
 
+typedef cv::Matx<double, 3, 3> Mat33d;
+
 extern "C"
 {
 // On doit nommer cette fonction selon le package, avec "J" à "Java", suivi du nom de la fonction
@@ -61,6 +63,41 @@ void JNICALL Java_ch_hepia_iti_opencvnativeandroidstudio_MainActivity_reduce(JNI
             }
         }
     }
+}
+
+void JNICALL Java_ch_hepia_iti_opencvnativeandroidstudio_MainActivity_accentuation(JNIEnv *env, jobject instance,
+                                                                             jlong matAddrGray, jlong matAddrAccent, jint radius) {
+    Mat &matDst = *(Mat *) matAddrAccent;
+    Mat &matSrc = *(Mat *) matAddrGray;
+
+    int channels = matSrc.channels();
+    int nRows = matSrc.rows;
+    int nCols = matSrc.cols * channels;
+
+    uchar *pSrc, *pSrcPrec, *pSrcNext, *pDst;
+    for(int i = 1; i < nRows - 1; ++i) {
+        pSrcPrec = matSrc.ptr<uchar>(i - 1);
+        pSrc = matSrc.ptr<uchar>(i);
+        pSrcNext = matSrc.ptr<uchar>(i + 1);
+        pDst = matDst.ptr<uchar>(i);
+        for (int j = 1; j < nCols - 1; ++j) {
+            pDst[j] = saturate_cast<uchar>(pSrc[j] * radius - pSrc[j - 1] - pSrc[j + 1] - pSrcPrec[j] - pSrcNext[j]);
+        }
+    }
+}
+
+void JNICALL Java_ch_hepia_iti_opencvnativeandroidstudio_MainActivity_accentuation2(JNIEnv *env, jobject instance,
+                                                                                    jlong src,
+                                                                                    jlong dst, jint radius) {
+    Mat &matDst = *(Mat *) dst;
+    Mat &matSrc = *(Mat *) src;
+
+    CV_Assert(matSrc.depth() == CV_8U);
+    Mat33d kern(0, -1, 0,
+                -1, radius, -1,
+                0, -1, 0);
+
+    filter2D(matSrc, matDst, matSrc.depth(), kern);
 }
 
 }

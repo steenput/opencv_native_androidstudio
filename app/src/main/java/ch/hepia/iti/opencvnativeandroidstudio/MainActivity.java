@@ -112,17 +112,21 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
 
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        //Mat matGray = inputFrame.gray();
-        Mat matRgba = inputFrame.rgba();
+        Mat matGray = inputFrame.gray();
+        //Mat matRgba = inputFrame.rgba();
         //salt(matGray.getNativeObjAddr(), 2000);
         //reduce(matGray.getNativeObjAddr(), 16);
-        reduce(matRgba.getNativeObjAddr(), 16);
-        //return matGray;
-        return matRgba;
+        //reduce(matRgba.getNativeObjAddr(), 16);
+        Mat matAccentuation = new Mat(matGray.rows(), matGray.cols(), matGray.type());
+        accentuation2(matGray.getNativeObjAddr(), matAccentuation.getNativeObjAddr(), 5);
+        return matGray;
+        //return matRgba;
     }
 
     public native void salt(long matAddrGray, int nbrElem);
     public native void binary(long matAddrGray);
     public native void reduce(long matAddrGray, int n);
+    public native void accentuation(long matAddrGray, long matAddrAccent, int radius);
+    public native void accentuation2(long matAddrGray, long matAddrAccent, int radius);
 }
 
