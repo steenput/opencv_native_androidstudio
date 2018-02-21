@@ -113,6 +113,16 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat matGray = inputFrame.gray();
+        for (int rows = 0; rows < matGray.rows(); rows++) {
+            for (int cols = 0; cols < matGray.cols(); cols++) {
+                if (matGray.get(rows, cols)[0] > 127) {
+                    matGray.put(rows, cols, 255);
+                }
+                else {
+                    matGray.put(rows, cols, 0);
+                }
+            }
+        }
         salt(matGray.getNativeObjAddr(), 2000);
         return matGray;
     }

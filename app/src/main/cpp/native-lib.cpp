@@ -9,6 +9,7 @@ using namespace cv;
 
 extern "C"
 {
+// On doit nommer cette fonction selon le package, avec "J" à "Java", suivi du nom de la fonction
 void JNICALL Java_ch_hepia_iti_opencvnativeandroidstudio_MainActivity_salt(JNIEnv *env, jobject instance,
                                                                            jlong matAddrGray,
                                                                            jint nbrElem) {
