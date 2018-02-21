@@ -20,4 +20,20 @@ void JNICALL Java_ch_hepia_iti_opencvnativeandroidstudio_MainActivity_salt(JNIEn
         mGr.at<uchar>(j, i) = 255;
     }
 }
+
+void JNICALL Java_ch_hepia_iti_opencvnativeandroidstudio_MainActivity_binary(JNIEnv *env, jobject instance,
+                                                                           jlong matAddrGray) {
+    Mat &mGr = *(Mat *) matAddrGray;
+    for (int rows = 0; rows < mGr.rows; rows++) {
+        for (int cols = 0; cols < mGr.cols; cols++) {
+            if (mGr.at<uchar>(rows, cols) > 127) {
+                mGr.at<uchar>(rows, cols) = 255;
+            }
+            else {
+                mGr.at<uchar>(rows, cols) = 0;
+            }
+        }
+    }
+}
+
 }
