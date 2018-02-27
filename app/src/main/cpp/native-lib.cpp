@@ -100,4 +100,53 @@ void JNICALL Java_ch_hepia_iti_opencvnativeandroidstudio_MainActivity_accentuati
     filter2D(matSrc, matDst, matSrc.depth(), kern);
 }
 
+void JNICALL Java_ch_hepia_iti_opencvnativeandroidstudio_MainActivity_blur(JNIEnv *env, jobject instance,
+                                                                           jlong src, jlong dst,
+                                                                           jdouble level) {
+    Mat &matDst = *(Mat *) dst;
+    Mat &matSrc = *(Mat *) src;
+
+    CV_Assert(matSrc.depth() == CV_8U);
+    Mat33d kern(0.0, level, 0.0,
+                level, level, level,
+                0.0, level, 0.0);
+
+    filter2D(matSrc, matDst, matSrc.depth(), kern);
+}
+
+void JNICALL Java_ch_hepia_iti_opencvnativeandroidstudio_MainActivity_blur2(JNIEnv *env, jobject instance,
+                                                                           jlong src, jlong dst,
+                                                                           jint level) {
+    Mat &matDst = *(Mat *) dst;
+    Mat &matSrc = *(Mat *) src;
+    medianBlur(matSrc, matDst, level);
+}
+
+void JNICALL Java_ch_hepia_iti_opencvnativeandroidstudio_MainActivity_laplacian(JNIEnv *env, jobject instance,
+                                                                            jlong src, jlong dst) {
+    Mat &matDst = *(Mat *) dst;
+    Mat &matSrc = *(Mat *) src;
+    Laplacian(matSrc, matDst, CV_16S, 3, 1, 0, BORDER_DEFAULT);
+    convertScaleAbs(matDst, matDst);
+}
+
+void JNICALL Java_ch_hepia_iti_opencvnativeandroidstudio_MainActivity_threshold(JNIEnv *env, jobject instance,
+                                                                                jlong src, jlong dst, jint thresholdValue) {
+    Mat &matDst = *(Mat *) dst;
+    Mat &matSrc = *(Mat *) src;
+    CV_Assert(matSrc.depth() == CV_8U);
+    threshold(matSrc, matDst, thresholdValue, 255, 0);
+}
+
+void JNICALL Java_ch_hepia_iti_opencvnativeandroidstudio_MainActivity_inversion(JNIEnv *env, jobject instance,
+                                                                                jlong matAddr,
+                                                                                jint thresholdVal) {
+    Mat &mGr = *(Mat *) matAddr;
+    MatIterator_<uchar> it, end;
+    for( it = mGr.begin<uchar>(), end = mGr.end<uchar>(); it != end; ++it) {
+        if (*it < thresholdVal) *it = 255;
+        else *it = 0;
+    }
+}
+
 }

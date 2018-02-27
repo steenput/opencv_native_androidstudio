@@ -117,9 +117,13 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         //salt(matGray.getNativeObjAddr(), 2000);
         //reduce(matGray.getNativeObjAddr(), 16);
         //reduce(matRgba.getNativeObjAddr(), 16);
-        Mat matAccentuation = new Mat(matGray.rows(), matGray.cols(), matGray.type());
-        accentuation2(matGray.getNativeObjAddr(), matAccentuation.getNativeObjAddr(), 5);
-        return matGray;
+        Mat mat2 = new Mat(matGray.rows(), matGray.cols(), matGray.type());
+        //accentuation2(matGray.getNativeObjAddr(), mat2.getNativeObjAddr(), 5);
+        blur2(matGray.getNativeObjAddr(), mat2.getNativeObjAddr(), 13);
+        laplacian(mat2.getNativeObjAddr(), matGray.getNativeObjAddr());
+        threshold(matGray.getNativeObjAddr(), mat2.getNativeObjAddr(), 16);
+        inversion(mat2.getNativeObjAddr(), 127);
+        return mat2;
         //return matRgba;
     }
 
@@ -128,5 +132,10 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     public native void reduce(long matAddrGray, int n);
     public native void accentuation(long matAddrGray, long matAddrAccent, int radius);
     public native void accentuation2(long matAddrGray, long matAddrAccent, int radius);
+    public native void blur(long matSrc, long matDst, double level);
+    public native void blur2(long matSrc, long matDst, int level);
+    public native void laplacian(long matSrc, long matDst);
+    public native void threshold(long matSrc, long matDst, int value);
+    public native void inversion(long matSrcm, int thresholdValue);
 }
 
